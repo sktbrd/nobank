@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "supercash",
+    "name": "nobank",
     "slug": "supercash",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/cashlogo.png",
         "backgroundColor": "#ffffff"
       }
     },
