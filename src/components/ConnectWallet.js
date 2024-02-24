@@ -1,6 +1,7 @@
 import React, { useState } from 'react'; // Fixed: Added useState import
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native'; // Added TouchableOpacity for custom button styles
 import { useWallet } from '../context/WalletContext';
+import { styles } from '../styles/styles';
 
 const ConnectWallet = () => {
     const { connectWallet } = useWallet();
@@ -34,27 +35,6 @@ const ConnectWallet = () => {
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    text: {
-        fontSize: 20,
-        marginBottom: 20,
-    },
-    // Added styles for custom button
-    button: {
-        backgroundColor: 'blue',
-        borderRadius: 10,
-        padding: 10,
-        marginBottom: 10,
-    },
-    buttonText: {
-        color: 'white',
-        textAlign: 'center',
-    },
-});
+
 
 export default ConnectWallet;
