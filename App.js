@@ -1,4 +1,5 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+// App.js
+import React, { useState, createContext, useContext, useEffect } from 'react';
 import { Text, StatusBar, StyleSheet, View, Button, TextInput, Alert, Platform } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -6,34 +7,33 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import WalletBalance from './src/tabs/WalletBalance';
+import ConnectWallet from './src/components/ConnectWallet';
+import { WalletProvider, useWallet } from './src/context/WalletContext';
 
-
-// Context for Wallet Connection
-const WalletContext = createContext();
-
-const useWallet = () => useContext(WalletContext);
-
-const WalletProvider = ({ children }) => {
-  const [isWalletConnected, setIsWalletConnected] = useState(false); // Default to disconnected for demonstration
-
-  const connectWallet = () => setIsWalletConnected(true);
-
+const MyTabs = () => {
   return (
-    <WalletContext.Provider value={{ isWalletConnected, connectWallet }}>
-      {children}
-    </WalletContext.Provider>
-  );
-};
+    <Tab.Navigator
 
-// Dummy ConnectWallet Component
-const ConnectWallet = () => {
-  const { connectWallet } = useWallet();
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Wallet is Disconnected</Text>
-      <Button title="Connect Wallet" onPress={connectWallet} color="limegreen" />
-    </View>
+          if (route.name === 'Wallet') {
+            iconName = focused ? 'wallet' : 'wallet-outline';
+          } else if (route.name === 'Map') {
+            iconName = focused ? 'map' : 'map-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: 'limegreen',
+        inactiveTintColor: 'gray',
+      }}>
+      <Tab.Screen name="Wallet" component={WalletBalance} />
+      <Tab.Screen name="Map" component={MainApp} />
+    </Tab.Navigator>
   );
 };
 
@@ -87,49 +87,28 @@ const MainApp = () => {
 
 const Tab = createBottomTabNavigator();
 
-function HomeScreen() {
-  const { isWalletConnected } = useWallet();
-
-  return isWalletConnected ? <MainApp /> : <ConnectWallet />;
-}
-
-function MyTabs() {
-  return (
-    <Tab.Navigator
-      initialRouteName="Home"
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Wallet') {
-            iconName = focused ? 'wallet' : 'wallet-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'gray',
-      })}
-    >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Wallet" component={WalletBalance} />
-    </Tab.Navigator>
-  );
-}
-
-export default function App() {
+function App() {
   return (
     <WalletProvider>
-      <NavigationContainer>
-        <MyTabs />
-      </NavigationContainer>
+      <AppContent />
     </WalletProvider>
   );
 }
 
-// Styles remain the same
+function AppContent() {
+  const { isWalletConnected } = useWallet();
+
+  return isWalletConnected ? (
+    <NavigationContainer>
+      <MyTabs />
+    </NavigationContainer>
+  ) : (
+    <ConnectWallet />
+  );
+}
+
+
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -164,3 +143,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default App;
