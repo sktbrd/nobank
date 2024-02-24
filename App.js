@@ -1,7 +1,12 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { StatusBar, StyleSheet, View, Button, Text, Alert } from 'react-native';
+import { Text, StatusBar, StyleSheet, View, Button, TextInput, Alert, Platform } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import WalletBalance from './src/tabs/WalletBalance';
+
 
 // Context for Wallet Connection
 const WalletContext = createContext();
@@ -32,7 +37,6 @@ const ConnectWallet = () => {
   );
 };
 
-// Main App Component
 const MainApp = () => {
   const [location, setLocation] = useState(null);
 
@@ -56,6 +60,11 @@ const MainApp = () => {
 
   return (
     <View style={styles.container}>
+      <TextInput
+        style={styles.textInput}
+        placeholder="Enter Location"
+        placeholderTextColor="#666"
+      />
       <MapView
         style={styles.map}
         initialRegion={location}
@@ -64,7 +73,8 @@ const MainApp = () => {
         {location && (
           <Marker
             coordinate={location}
-            title="Your Location" />
+            title="Your Location"
+          />
         )}
       </MapView>
       <View style={styles.pickupButton}>
@@ -75,21 +85,47 @@ const MainApp = () => {
   );
 };
 
+const Tab = createBottomTabNavigator();
+
+function MyTabs() {
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Wallet') {
+            iconName = focused ? 'wallet' : 'wallet-outline';
+          }
+
+          // You can return any component that you like here!
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'tomato', // Customize active tab color
+        tabBarInactiveTintColor: 'gray', // Customize inactive tab color
+      })}
+    >
+      <Tab.Screen name="Home" component={MainApp} />
+      <Tab.Screen name="Wallet" component={WalletBalance} />
+    </Tab.Navigator>
+  );
+}
+
+
 export default function App() {
   return (
     <WalletProvider>
-      <WalletConsumer />
+      <NavigationContainer>
+        <MyTabs />
+      </NavigationContainer>
     </WalletProvider>
   );
 }
 
-// Component to determine which view to show based on wallet connection
-const WalletConsumer = () => {
-  const { isWalletConnected } = useWallet();
-
-  return isWalletConnected ? <MainApp /> : <ConnectWallet />;
-};
-
+// Styles remain the same
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -114,5 +150,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'limegreen',
     padding: 10,
     borderRadius: 10,
-  }
+  },
+  textInput: {
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 10,
+    margin: 10,
+    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 80,
+    fontSize: 16,
+  },
 });
