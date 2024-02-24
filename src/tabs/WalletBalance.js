@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { WalletContext } from '../context/WalletContext';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // Dummy data for cryptocurrencies
 const cryptoData = [
     { name: 'Ethereum', symbol: 'ETH', price: '3,100', change: '+2.1%' },
@@ -48,6 +48,12 @@ const WalletBalance = () => {
                 style={[styles.button, styles.disconnectButton]}
                 onPress={disconnectWallet}>
                 <Text style={styles.buttonText}>Disconnect Wallet</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={async () => {
+                const keys = await AsyncStorage.getItem('privatekey');
+                console.log(keys);
+            }}>
+                <Text style={styles.buttonText}>Log Keys</Text>
             </TouchableOpacity>
         </View>
     );
