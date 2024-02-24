@@ -20,7 +20,7 @@ let GLOBAL_SESSION = "unset"
 // let spec = "http://127.0.0.1:4000/spec/swagger.json"
 let spec = "http://127.0.0.1:9001/spec/swagger.json"
 let PIONEER_WS = 'ws://127.0.0.1:9001'
-
+let QUERY_KEY = 'tester-mm-mobile'
 // Define an async function to run the test
 const runTest = async () => {
     let tag = " | test | "
@@ -57,33 +57,37 @@ const runTest = async () => {
         let terminalInfo = await bankless.TerminalPrivate({terminalName:TERMINAL_NAME});
         console.log("terminalInfo: ",terminalInfo)
 
-        let rate
-        let TOTAL_CASH = 100
-        let TOTAL_DAI = 100
-        if(TOTAL_CASH == 0 || TOTAL_DAI == 0){
-            rate = "0"
-        } else {
-            rate = (TOTAL_CASH / TOTAL_DAI)
-        }
-        log.info(tag,"rate: ",rate)
+        if(!terminalInfo.data){
+            //if new terminal register
+            let rate
+            let TOTAL_CASH = 100
+            let TOTAL_DAI = 100
+            if(TOTAL_CASH == 0 || TOTAL_DAI == 0){
+                rate = "0"
+            } else {
+                rate = (TOTAL_CASH / TOTAL_DAI)
+            }
+            log.info(tag,"rate: ",rate)
 
-        //
-        let terminal = {
-            terminalId:TERMINAL_NAME+":"+await signer.getAddress(seed),
-            terminalName:TERMINAL_NAME,
-            tradePair: "USD_DAI",
-            rate,
-            captable:[],
-            sessionId: GLOBAL_SESSION,
-            TOTAL_CASH:TOTAL_CASH.toString(),
-            TOTAL_DAI:TOTAL_DAI.toString(),
-            pubkey:await signer.getAddress(seed),
-            fact:"",
-            location:[ 4.5981, -74.0758 ]
+            //
+            let terminal = {
+                terminalId:TERMINAL_NAME+":"+await signer.getAddress(seed),
+                terminalName:TERMINAL_NAME,
+                tradePair: "USD_DAI",
+                rate,
+                captable:[],
+                sessionId: GLOBAL_SESSION,
+                TOTAL_CASH:TOTAL_CASH.toString(),
+                TOTAL_DAI:TOTAL_DAI.toString(),
+                pubkey:await signer.getAddress(seed),
+                fact:"",
+                location:[ 4.5981, -74.0758 ]
+            }
+            console.log("terminal: ",terminal)
+            let resultSubmit = await bankless.SubmitTerminal(terminal)
+            log.info(tag,"resultSubmit: ",resultSubmit)
         }
-        console.log("terminal: ",terminal)
-        let resultSubmit = await bankless.SubmitTerminal(terminal)
-        log.info(tag,"resultSubmit: ",resultSubmit)
+
 
         //go online
         //sub ALL events
@@ -97,6 +101,7 @@ const runTest = async () => {
             try{
 
                 //is online
+                //TODO push location
 
                 //if match
                 if(event.payload && event.payload.type == "match"){

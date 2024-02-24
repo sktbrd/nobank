@@ -20,7 +20,7 @@ let GLOBAL_SESSION = "unset"
 // let spec = "http://127.0.0.1:4000/spec/swagger.json"
 let spec = "http://127.0.0.1:9001/spec/swagger.json"
 let PIONEER_WS = 'ws://127.0.0.1:9001'
-
+let QUERY_KEY = 'tester-driver-mobile'
 // Define an async function to run the test
 const runTest = async () => {
     let tag = " | test | "
@@ -32,11 +32,10 @@ const runTest = async () => {
         address = address.toLowerCase()
         console.log("address: ",address)
 
-        let TERMINAL_NAME = "local-app-e2e-mm"
         //get dollars local
         let config = {
             queryKey:QUERY_KEY,
-            username:TERMINAL_NAME,
+            username:"driver:"+address,
             wss:PIONEER_WS
         }
         //build register payload
@@ -51,11 +50,16 @@ const runTest = async () => {
         let result = await bankless.Health();
         console.log("result: ",result.data)
 
-        let driver = {
+        //get driver
 
+        //if no driver register
+
+        let driver = {
+            pubkey:address,
+            location:[ 4.5981, -74.0758 ]
         }
 
-        console.log("terminal: ",terminal)
+        console.log("driver: ",driver)
         let resultSubmit = await bankless.SubmitDriver(driver)
         log.info(tag,"resultSubmit: ",resultSubmit)
 
