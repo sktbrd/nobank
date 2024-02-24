@@ -87,6 +87,12 @@ const MainApp = () => {
 
 const Tab = createBottomTabNavigator();
 
+function HomeScreen() {
+  const { isWalletConnected } = useWallet();
+
+  return isWalletConnected ? <MainApp /> : <ConnectWallet />;
+}
+
 function MyTabs() {
   return (
     <Tab.Navigator
@@ -101,19 +107,17 @@ function MyTabs() {
             iconName = focused ? 'wallet' : 'wallet-outline';
           }
 
-          // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: 'tomato', // Customize active tab color
-        tabBarInactiveTintColor: 'gray', // Customize inactive tab color
+        tabBarActiveTintColor: 'tomato',
+        tabBarInactiveTintColor: 'gray',
       })}
     >
-      <Tab.Screen name="Home" component={MainApp} />
+      <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Wallet" component={WalletBalance} />
     </Tab.Navigator>
   );
 }
-
 
 export default function App() {
   return (
