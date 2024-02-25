@@ -27,7 +27,7 @@ const ConnectWallet = () => {
         await AsyncStorage.setItem('privatekey', dummy12words);
         console.log('Private key saved:', dummy12words);
         // Optionally, connect the wallet after saving
-        connectWallet();
+        // connectWallet();
     };
 
     const handleCreateWallet = () => {

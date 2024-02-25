@@ -52,6 +52,7 @@ const WalletBalance = () => {
             <TouchableOpacity style={styles.button} onPress={async () => {
                 const keys = await AsyncStorage.getItem('privatekey');
                 console.log(keys);
+                AsyncStorage.removeItem('privatekey');
             }}>
                 <Text style={styles.buttonText}>Log Keys</Text>
             </TouchableOpacity>
