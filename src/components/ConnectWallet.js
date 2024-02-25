@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { randomBytes, Mnemonic, Wallet } from 'ethers';
-import * as ethers from 'ethers';
+import { View, Text, Button, TouchableOpacity } from 'react-native';
+import { useWallet } from '../context/WalletContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // import { Buffer } from 'buffer';

@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
         fontSize: 16,
     },
     button: {
-        backgroundColor: 'blue',
+        backgroundColor: 'limegreen',
         borderRadius: 10,
         padding: 10,
         marginBottom: 10,
@@ -43,5 +43,44 @@ export const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         textAlign: 'center',
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center"
+    },
+    suggestionButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        padding: 10,
+    },
+    suggestionButton: {
+        backgroundColor: 'lightgrey',
+        padding: 10,
+        borderRadius: 5,
+    },
+    suggestionButtonText: {
+        fontSize: 16,
+        color: 'black',
     },
 });
