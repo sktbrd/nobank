@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { WalletContext } from '../context/WalletContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { styles } from '../styles/styles';
+
 // Dummy data for cryptocurrencies
 const cryptoData = [
     { name: 'Ethereum', symbol: 'ETH', price: '3,100', change: '+2.1%' },
@@ -35,87 +37,24 @@ const WalletBalance = () => {
                 ))}
             </ScrollView>
             {selectedToken && (
-                <View style={styles.actionButtonsContainer}>
+                <View style={styles.centeredView}>
                     <TouchableOpacity style={[styles.button, styles.actionButton]} onPress={() => { /* Implement Buy Logic */ }}>
                         <Text style={styles.buttonText}>Buy {selectedToken.symbol}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.button, styles.actionButton]} onPress={() => { /* Implement Sell Logic */ }}>
                         <Text style={styles.buttonText}>Sell {selectedToken.symbol}</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.disconnectButton}
+                        onPress={disconnectWallet}>
+                        <Text style={styles.buttonText}>Disconnect Wallet</Text>
+                    </TouchableOpacity>
                 </View>
             )}
-            <TouchableOpacity
-                style={[styles.button, styles.disconnectButton]}
-                onPress={disconnectWallet}>
-                <Text style={styles.buttonText}>Disconnect Wallet</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={async () => {
-                const keys = await AsyncStorage.getItem('privatekey');
-                console.log(keys);
-                AsyncStorage.removeItem('privatekey');
-            }}>
-                <Text style={styles.buttonText}>Log Keys</Text>
-            </TouchableOpacity>
+
         </View>
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#f5f5f5',
-    },
-    tableContainer: {
-        marginBottom: 20,
-    },
-    tableHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        borderBottomWidth: 2,
-        borderBottomColor: '#ddd',
-        paddingBottom: 10,
-    },
-    headerText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    tableRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        paddingVertical: 10,
-        backgroundColor: '#fff', // Optional: Add background color for better touch feedback
-    },
-    rowText: {
-        fontSize: 14,
-    },
-    button: {
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 10,
-        backgroundColor: 'tomato',
-        width: '60%',
-        alignSelf: 'center',
-        marginTop: 10, // Ensure spacing between buttons
-    },
-    buttonText: {
-        color: '#fff',
-        textAlign: 'center',
-        fontSize: 18,
-    },
-    disconnectButton: {
-        marginTop: 10,
-    },
-    actionButtonsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        marginTop: 10,
-    },
-    actionButton: {
-        backgroundColor: 'limegreen', // Different color for action buttons
-        width: '45%', // Adjust width for side-by-side layout
-    },
-});
 
 export default WalletBalance;

@@ -80,6 +80,13 @@ const styles = StyleSheet.create({
     billText: {
         marginTop: 5,
     },
+    textInput: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        width: '70%',
+        marginBottom: 10,
+    },
 });
 
 const billImages = {
@@ -131,6 +138,7 @@ const Map = () => {
 
     return (
         <View style={styles.container}>
+            {/* <TextInput type="text" style={styles.textInput} placeholder="Enter your address" /> */}
             <MapView style={styles.map} initialRegion={location}>
                 {location && <Marker coordinate={location} title="You are here" description="Your location" />}
             </MapView>
