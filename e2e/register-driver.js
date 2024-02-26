@@ -9,7 +9,11 @@ require("dotenv").config()
 require("dotenv").config({path:'../.env'})
 const Bankless = require("@pioneer-platform/pioneer-client").default;
 // let signer = require("eth-token-wallet")
-let signer = require("eth_mnemonic_signer")
+// let signer = require("eth_mnemonic_signer")
+
+const { randomBytes, Wallet, Mnemonic } = require('ethers');
+const ethers = require('ethers');
+
 const log = require('@pioneer-platform/loggerdog')();
 let Events = require("@pioneer-platform/pioneer-events")
 // import { TokenWallet } from 'eth-token-wallet'
@@ -26,11 +30,15 @@ const runTest = async () => {
     let tag = " | test | "
     try {
 
-        let index = 1
-        let path = "m/44'/60'/"+index+"'/0/0"
-        let address = await signer.getAddress(seed,path)
-        address = address.toLowerCase()
-        console.log("address: ",address)
+        // let index = 1
+        // let path = "m/44'/60'/"+index+"'/0/0"
+        // let address = await signer.getAddress(seed,path)
+        // address = address.toLowerCase()
+        // console.log("address: ",address)
+
+        const wallet = Wallet.fromPhrase(seed);
+        console.log("Wallet address: ", wallet.address);
+        let address = wallet.address.toLowerCase()
 
         //get dollars local
         let config = {
