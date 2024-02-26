@@ -6,8 +6,9 @@ import { styles } from '../styles/styles';
 
 // Dummy data for cryptocurrencies
 const cryptoData = [
-    { name: 'Ethereum', symbol: 'ETH', price: '3,100', change: '+2.1%' },
-    { name: 'USDC', symbol: 'USDC', price: '1', change: '+0.1%' },
+    { name: 'Ethereum', symbol: 'ETH', price: '3,100', change: '+2.1%', logo: require('../../assets/crypto/eth.png') },
+    { name: 'USDC', symbol: 'USDC', price: '1', change: '+0.1%', logo: require('../../assets/crypto/usdc.png') },
+    { name: 'Pepe', symbol: 'PEPE', price: '420', change: '-0.69%', logo: require('../../assets/crypto/pepe.png') },
 ];
 
 const WalletBalance = () => {
@@ -28,8 +29,15 @@ const WalletBalance = () => {
                     <Text style={styles.headerText}>Change</Text>
                 </View>
                 {cryptoData.map((crypto, index) => (
-                    <TouchableOpacity key={index} style={styles.tableRow} onPress={() => handleSelectToken(crypto)}>
-                        <Text style={styles.rowText}>{crypto.name}</Text>
+                    <TouchableOpacity
+                        key={index}
+                        style={[
+                            styles.tableRow,
+                            selectedToken && selectedToken.symbol === crypto.symbol ? styles.selectedRow : null
+                        ]}
+                        onPress={() => handleSelectToken(crypto)}
+                    >
+                        <Text style={styles.rowText}> {crypto.name}</Text>
                         <Text style={styles.rowText}>{crypto.symbol}</Text>
                         <Text style={styles.rowText}>{crypto.price}</Text>
                         <Text style={[styles.rowText, { color: crypto.change.includes('-') ? 'red' : 'green' }]}>{crypto.change}</Text>
@@ -56,5 +64,8 @@ const WalletBalance = () => {
     );
 };
 
+styles.selectedRow = {
+    backgroundColor: '#d3d3d3', // Change this to your preferred color
+};
 
 export default WalletBalance;
