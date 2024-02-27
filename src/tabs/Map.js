@@ -67,12 +67,13 @@ const Map = () => {
             try {
                 const response = await fetch('https://cash2btc.com/api/v1/bankless/info');
                 const data = await response.json();
-
+                console.log("data: ", data);
                 // Process the response to extract and format terminal locations
                 const terminals = data.map(item => ({
                     lat: item.location[0], // Latitude is the first element
                     lng: item.location[1], // Longitude is the second element
                     name: item.terminalName,
+                    totalCash: item.TOTAL_CASH,
                     address: "No address provided", // Since address isn't in the response, using a placeholder
                 }));
                 console.log("terminals: ", terminals);
@@ -96,7 +97,8 @@ const Map = () => {
                         key={index}
                         coordinate={{ latitude: terminal.lat, longitude: terminal.lng }}
                         title={terminal.name}
-                        description={terminal.address}
+                        description={terminal.TOTAL_CASH}
+                        icon={require('../../assets/cashlogo.png')}
                     />
                 ))}
             </MapView>

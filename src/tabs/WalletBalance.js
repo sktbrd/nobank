@@ -26,21 +26,13 @@ let USDT_CONTRACT_POLYGON = "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"
 const service = "https://polygon.rpc.blxrbdn.com"
 
 
-// Dummy data for cryptocurrencies
-const cryptoData = [
-    { name: 'Ethereum', symbol: 'ETH', price: '3,100', change: '+2.1%', logo: require('../../assets/crypto/eth.png') },
-    { name: 'USDC', symbol: 'USDC', price: '1', change: '+0.1%', logo: require('../../assets/crypto/usdc.png') },
-    { name: 'Pepe', symbol: 'PEPE', price: '420', change: '-0.69%', logo: require('../../assets/crypto/pepe.png') },
-];
+
 
 const WalletBalance = () => {
     const { disconnectWallet } = useContext(WalletContext);
-    const [selectedToken, setSelectedToken] = useState(cryptoData.find(crypto => crypto.symbol === 'ETH'));
-
-    const handleSelectToken = (token) => {
-        setSelectedToken(token);
-    };
-
+    const [cryptoData, setCryptoData] = useState([]);
+    const [selectedToken, setSelectedToken] = useState(null);
+    const [usdtbalance, setUsdtbalance] = useState(0)
     let onStart = async function () {
         try {
             let storedMnemonic = await AsyncStorage.getItem('mnemonic');
@@ -76,7 +68,7 @@ const WalletBalance = () => {
             const tokenBalance = formatUnits(balanceBN, decimals);
 
             console.log("tokenBalance: ", tokenBalance);
-
+            setUsdtbalance(tokenBalance);
 
 
         } catch (e) {
@@ -86,15 +78,21 @@ const WalletBalance = () => {
 
     useEffect(() => {
         onStart()
+        setCryptoData([
+            { name: 'USDT', symbol: 'USDT', balance: usdtbalance, price: 'N/A', change: 'N/A', logo: require('../../assets/crypto/eth.png') },
+        ]);
+        setSelectedToken(cryptoData[0])
     }, []);
-
+    const handleSelectToken = (token) => {
+        setSelectedToken(token);
+    };
     return (
         <View style={styles.container}>
             <ScrollView style={styles.tableContainer}>
                 <View style={styles.tableHeader}>
                     <Text style={styles.headerText}>Name</Text>
                     <Text style={styles.headerText}>Symbol</Text>
-                    <Text style={styles.headerText}>Price</Text>
+                    <Text style={styles.headerText}>Balance</Text>
                     <Text style={styles.headerText}>Change</Text>
                 </View>
                 {cryptoData.map((crypto, index) => (
@@ -106,9 +104,9 @@ const WalletBalance = () => {
                         ]}
                         onPress={() => handleSelectToken(crypto)}
                     >
-                        <Text style={styles.rowText}> {crypto.name}</Text>
+                        <Text style={styles.rowText}>{crypto.name}</Text>
                         <Text style={styles.rowText}>{crypto.symbol}</Text>
-                        <Text style={styles.rowText}>{crypto.price}</Text>
+                        <Text style={styles.rowText}>{crypto.balance}</Text>
                         <Text style={[styles.rowText, { color: crypto.change.includes('-') ? 'red' : 'green' }]}>{crypto.change}</Text>
                     </TouchableOpacity>
                 ))}
@@ -128,10 +126,11 @@ const WalletBalance = () => {
                     </TouchableOpacity>
                 </View>
             )}
-
         </View>
     );
 };
+
+
 
 styles.selectedRow = {
     backgroundColor: '#d3d3d3', // Change this to your preferred color

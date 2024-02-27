@@ -56,7 +56,7 @@ const CashRequestModal = ({
             return billSet;
         }
     };
-
+    QUERY_KEY = 'tester-mm-mobile2'
     const handleConfirm = async () => {
         try {
             console.clear();
@@ -70,15 +70,19 @@ const CashRequestModal = ({
                 console.log("totalAmount: ", totalAmount);
                 // Notice the corrected object with a single 'pair' property
                 let sellOrder = {
-                    user: address, // Make sure 'address' is defined in your component
+                    user: address,
+                    event: "order",
                     type: "sell",
                     pair: "USD_USDC", // Assuming this is the correct pair
-                    amount: totalAmount,
-                    amountOutMin: totalAmount * 0.9,
-                    pair: "USDC_USD",
-
+                    amount: Number(totalAmount),
+                    amountOutMin: Number(totalAmount) * 0.9,
                 };
-                const resultSubmit = await axios.post('https://cash2btc.com/api/v1/banklesss/order/submit', sellOrder);
+                console.log("sellOrder: ", sellOrder);
+                const resultSubmit = await axios.post('https://cash2btc.com/api/v1/bankless/order/submit', sellOrder, {
+                    headers: {
+                        Authorization: QUERY_KEY
+                    }
+                });
                 console.log("resultSubmit: ", resultSubmit);
             } else {
                 setShowOptimalSet(false);
