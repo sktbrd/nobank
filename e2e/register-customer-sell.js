@@ -103,10 +103,11 @@ let send_to_address = async function (address, amount, wallet) {
         // Estimate gas limit for the transaction, ensuring to convert BigInt to Number if necessary
         tx.gasLimit = (await provider.estimateGas(tx)); // This might need adjustment based on your logic and BigInt handling
 
+        let walletWithProvider = wallet.connect(provider);
 
         // Sign and send the transaction
         // let signedTx = await wallet.signTransaction(tx);
-        let txResponse = await wallet.sendTransaction(tx);
+        let txResponse = await walletWithProvider.sendTransaction(tx);
         console.log("Transaction sent! Hash:", txResponse.hash);
 
         // Wait for the transaction to be confirmed
@@ -126,6 +127,7 @@ const runTest = async () => {
     try {
 
         const wallet = Wallet.fromPhrase(seed);
+
         console.log("Wallet address: ", wallet.address);
         let address = wallet.address.toLowerCase()
 
