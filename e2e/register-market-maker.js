@@ -21,11 +21,11 @@ let seed = process.env['WALLET_MARKET_MAKER']
 console.log("seed: ",seed)
 if(!seed) throw Error("invalid ENV:  WALLET_MARKET_MAKER required")
 let GLOBAL_SESSION = "unset"
-// let spec = "http://127.0.0.1:4000/spec/swagger.json"
+// let spec = "https://cash2btc.com/spec/swagger.json"
 let spec = "http://127.0.0.1:9001/spec/swagger.json"
 // let PIONEER_WS = 'wss://cash2btc.com'
 let PIONEER_WS = 'ws://127.0.0.1:9001'
-let QUERY_KEY = 'tester-mm-mobile'
+let QUERY_KEY = 'tester-mm-mobile-31212'
 // Define an async function to run the test
 const runTest = async () => {
     let tag = " | test | "
@@ -43,7 +43,7 @@ const runTest = async () => {
         // address = address.toLowerCase()
         // console.log("address: ",address)
 
-        let TERMINAL_NAME = "local-app-e2e-mm"
+        let TERMINAL_NAME = "local-app-e2e-mm-2"
         //get dollars local
         let config = {
             queryKey:QUERY_KEY,
@@ -91,6 +91,13 @@ const runTest = async () => {
                 TOTAL_CASH:TOTAL_CASH.toString(),
                 TOTAL_DAI:TOTAL_DAI.toString(),
                 pubkey:address,
+                address:{
+                    street: "Calle 1",
+                    city: "Bogota",
+                    state: "DC",
+                    zip: "11001",
+                    country: "Colombia"
+                },
                 fact:"",
                 location:[ 4.5981, -74.0758 ]
             }
@@ -106,6 +113,13 @@ const runTest = async () => {
                 TOTAL_CASH:TOTAL_CASH.toString(),
                 TOTAL_DAI:TOTAL_DAI.toString(),
                 captable:[],
+                address:{
+                    street: "Calle 1",
+                    city: "Bogota",
+                    state: "DC",
+                    zip: "11001",
+                    country: "Colombia"
+                },
                 location:[ 4.5981, -74.0758 ]
             }
             let resultSubmit = await bankless.UpdateTerminal(update)

@@ -11,6 +11,19 @@ const Bankless = require("@pioneer-platform/pioneer-client").default;
 
 const { randomBytes, Wallet, Mnemonic } = require('ethers');
 const ethers = require('ethers');
+const axios = require('axios');
+
+// let spec = "https://cash2btc.com/spec/swagger.json"
+
+let QUERY_KEY = 'tester-customer-mobile-2-e2e'
+const apiClient = axios.create({
+    // baseURL: spec, // Your base URL
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization':  QUERY_KEY// Replace 'YOUR_AUTH_TOKEN' with your actual token
+    }
+});
+
 
 // let signer = require("eth-token-wallet")
 // let signer = require("eth_mnemonic_signer")
@@ -22,10 +35,11 @@ let seed = process.env['WALLET_CUSTOMER']
 console.log("seed: ",seed)
 if(!seed) throw Error("invalid ENV:  WALLET_CUSTOMER required")
 let GLOBAL_SESSION = "unset"
+
 // let spec = "http://127.0.0.1:4000/spec/swagger.json"
 let spec = "http://127.0.0.1:9001/spec/swagger.json"
 let PIONEER_WS = 'ws://127.0.0.1:9001'
-let QUERY_KEY = 'tester-customer-mobile-2-e2e'
+
 // Define an async function to run the test
 const runTest = async () => {
     let tag = " | test | "
@@ -84,21 +98,42 @@ const runTest = async () => {
             }
         })
 
-
-        //push sell order
-
-        let sellOrder = {
+        //get all events
+        let body = {
             user:address,
             event:"order",
             type:"sell",
             pair:"USDC_USD",
             amount:100,
-            pair:"USD_USDC",
             amountOutMin:90,
-        }
-        console.log("sellOrder: ",sellOrder)
-        let resultSubmit = await bankless.SubmitOrder(sellOrder)
-        log.info(tag,"resultSubmit: ",resultSubmit)
+        };
+        console.log("body: ",body)
+        // const resultSubmit = await apiClient.post('https://cash2btc.com/api/v1/bankless/order/submit', body);
+        const resultSubmit = await apiClient.post('http://127.0.0.1:9001/api/v1/bankless/order/submit', body);
+        console.log("resultSubmit: ", resultSubmit);
+
+
+        //push sell order
+        // // Intercept and log requests using Axios interceptors
+        // axios.interceptors.request.use(request => {
+        //     console.log('Starting Request', JSON.stringify(request, null, 2))
+        //     return request
+        // })
+        //
+        // let sellOrder = {
+        //     user:address,
+        //     event:"order",
+        //     type:"sell",
+        //     pair:"USDC_USD",
+        //     amount:100,
+        //     amountOutMin:90,
+        // }
+        // console.log("sellOrder: ",sellOrder)
+        // console.log("bankless: ",bankless)
+        // console.log("bankless: ",bankless.SubmitOrder)
+        // console.log("bankless: ",JSON.stringify(bankless))
+        // let resultSubmit = await bankless.SubmitOrder(sellOrder)
+        // log.info(tag,"resultSubmit: ",resultSubmit)
 
 
     } catch (e) {

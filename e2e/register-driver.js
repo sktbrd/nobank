@@ -21,8 +21,9 @@ let seed = process.env['WALLET_DRIVER']
 console.log("seed: ",seed)
 if(!seed) throw Error("invalid ENV:  WALLET_MARKET_MAKER required")
 let GLOBAL_SESSION = "unset"
-// let spec = "http://127.0.0.1:4000/spec/swagger.json"
+// let spec = "https://cash2btc.com/spec/swagger.json"
 let spec = "http://127.0.0.1:9001/spec/swagger.json"
+// let PIONEER_WS = 'wss://cash2btc.com'
 let PIONEER_WS = 'ws://127.0.0.1:9001'
 let QUERY_KEY = 'tester-driver-mobileasdas'
 // Define an async function to run the test
