@@ -1,98 +1,31 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { WalletContext } from '../context/WalletContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { useWallet } from '../context/WalletContext'; // Correctly import useWallet
 import { styles } from '../styles/styles';
-import * as Events from "@pioneer-platform/pioneer-events";
-import axios from "axios";
-import { useEffect } from 'react';
-import { ethers } from 'ethers';
-
-import { randomBytes, Mnemonic, Wallet, JsonRpcProvider, formatUnits, Contract } from 'ethers';
-
-let QUERY_KEY = 'tester-mm-mobile2'
-
-const apiClient = axios.create({
-    baseURL: spec, // Your base URL
-    headers: {
-        'Authorization': QUERY_KEY// Replace 'YOUR_AUTH_TOKEN' with your actual token
-    }
-});
-
-// let spec = "https://cash2btc.com/spec/swagger.json"
-let spec = "https://cash2btc.com/api/v1"
-let PIONEER_WS = 'wss://cash2btc.com'
-let USDT_CONTRACT_POLYGON = "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"
-const service = "https://polygon.rpc.blxrbdn.com"
-
-
-
 
 const WalletBalance = () => {
-    const { disconnectWallet } = useContext(WalletContext);
-    const [cryptoData, setCryptoData] = useState([]);
-    const [selectedToken, setSelectedToken] = useState(null);
-    const [usdtbalance, setUsdtbalance] = useState(0)
-    let onStart = async function () {
-        try {
-            let storedMnemonic = await AsyncStorage.getItem('mnemonic');
-            // The ABI for the methods we want to interact with
-            const minABI = [
-                // balanceOf
-                {
-                    "constant": true,
-                    "inputs": [{ "name": "_owner", "type": "address" }],
-                    "name": "balanceOf",
-                    "outputs": [{ "name": "balance", "type": "uint256" }],
-                    "type": "function"
-                },
-                // decimals
-                {
-                    "constant": true,
-                    "inputs": [],
-                    "name": "decimals",
-                    "outputs": [{ "name": "", "type": "uint8" }],
-                    "type": "function"
-                }
-            ];
-            // Assuming a provider is set up (e.g., ethers.getDefaultProvider or other)
-            const provider = new JsonRpcProvider(service);
-            const newContract = new ethers.Contract(USDT_CONTRACT_POLYGON, minABI, provider);
-
-            const decimals = await newContract.decimals();
-            const wallet = Wallet.fromPhrase(storedMnemonic);
-            const balanceBN = await newContract.balanceOf(wallet);
-
-            console.log("wallet: ", wallet);
-
-            const tokenBalance = formatUnits(balanceBN, decimals);
-
-            console.log("tokenBalance: ", tokenBalance);
-            setUsdtbalance(tokenBalance);
-
-            return usdtbalance
-
-
-        } catch (e) {
-            console.error(e)
-        }
-    }
+    const { balance, disconnectWallet, fetchAndSetBalance } = useWallet(); // Destructure the needed values from the context
 
     useEffect(() => {
-        onStart()
+        fetchAndSetBalance(); // Call this to ensure the balance is fetched/updated when the component mounts
+    }, [fetchAndSetBalance]); // Correct dependency array
 
-        setCryptoData([
-            { name: 'USDT', symbol: 'USDT', balance: usdtbalance, price: 'N/A', change: 'N/A', logo: require('../../assets/crypto/eth.png') },
-        ]);
-        setSelectedToken(cryptoData[0])
+    // Assuming cryptoData will be populated or fetched from somewhere
+    const cryptoData = [
+        { name: 'USDT', symbol: 'USDT', balance: balance, price: 'N/A', change: 'N/A', logo: require('../../assets/crypto/eth.png') },
+    ];
 
-    }, []);
+    const [selectedToken, setSelectedToken] = React.useState(cryptoData[0]);
+
     const handleSelectToken = (token) => {
         setSelectedToken(token);
     };
+
     return (
         <View style={styles.container}>
             <ScrollView style={styles.tableContainer}>
+                <Text>Balance: {balance} USDT</Text>
+
                 <View style={styles.tableHeader}>
                     <Text style={styles.headerText}>Name</Text>
                     <Text style={styles.headerText}>Symbol</Text>
@@ -104,7 +37,7 @@ const WalletBalance = () => {
                         key={index}
                         style={[
                             styles.tableRow,
-                            selectedToken && selectedToken.symbol === crypto.symbol ? styles.selectedRow : null
+                            selectedToken && selectedToken.symbol === crypto.symbol ? styles.selectedRow : null,
                         ]}
                         onPress={() => handleSelectToken(crypto)}
                     >
@@ -133,9 +66,5 @@ const WalletBalance = () => {
         </View>
     );
 };
-
-
-
-
 
 export default WalletBalance;
