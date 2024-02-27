@@ -23,6 +23,7 @@ if(!seed) throw Error("invalid ENV:  WALLET_MARKET_MAKER required")
 let GLOBAL_SESSION = "unset"
 // let spec = "http://127.0.0.1:4000/spec/swagger.json"
 let spec = "http://127.0.0.1:9001/spec/swagger.json"
+// let PIONEER_WS = 'wss://cash2btc.com'
 let PIONEER_WS = 'ws://127.0.0.1:9001'
 let QUERY_KEY = 'tester-mm-mobile'
 // Define an async function to run the test
@@ -65,21 +66,23 @@ const runTest = async () => {
         let terminalInfo = await bankless.TerminalPrivate({terminalName:TERMINAL_NAME});
         console.log("terminalInfo: ",terminalInfo)
 
+        //if new terminal register
+        let rate
+        let TOTAL_CASH = 100
+        let TOTAL_DAI = 100
+        if(TOTAL_CASH == 0 || TOTAL_DAI == 0){
+            rate = "0"
+        } else {
+            rate = (TOTAL_CASH / TOTAL_DAI)
+        }
+        log.info(tag,"rate: ",rate)
+
         if(!terminalInfo.data){
-            //if new terminal register
-            let rate
-            let TOTAL_CASH = 100
-            let TOTAL_DAI = 100
-            if(TOTAL_CASH == 0 || TOTAL_DAI == 0){
-                rate = "0"
-            } else {
-                rate = (TOTAL_CASH / TOTAL_DAI)
-            }
-            log.info(tag,"rate: ",rate)
+
 
             //
             let terminal = {
-                terminalId:TERMINAL_NAME+":"+await signer.getAddress(seed),
+                terminalId:TERMINAL_NAME+":"+address,
                 terminalName:TERMINAL_NAME,
                 tradePair: "USD_DAI",
                 rate,
@@ -87,14 +90,29 @@ const runTest = async () => {
                 sessionId: GLOBAL_SESSION,
                 TOTAL_CASH:TOTAL_CASH.toString(),
                 TOTAL_DAI:TOTAL_DAI.toString(),
-                pubkey:await signer.getAddress(seed),
+                pubkey:address,
                 fact:"",
                 location:[ 4.5981, -74.0758 ]
             }
             console.log("terminal: ",terminal)
             let resultSubmit = await bankless.SubmitTerminal(terminal)
             log.info(tag,"resultSubmit: ",resultSubmit)
+        } else {
+            let update = {
+                sessionId: GLOBAL_SESSION,
+                    terminalName:TERMINAL_NAME,
+                pubkey:address,
+                rate,
+                TOTAL_CASH:TOTAL_CASH.toString(),
+                TOTAL_DAI:TOTAL_DAI.toString(),
+                captable:[],
+                location:[ 4.5981, -74.0758 ]
+            }
+            let resultSubmit = await bankless.UpdateTerminal(update)
+            log.info(tag,"resultSubmit: ",resultSubmit)
         }
+
+        //else update
 
 
         //go online
@@ -105,9 +123,8 @@ const runTest = async () => {
 
         //sub to events
         clientEvents.events.on('message', async (event) => {
-            let tag = TAG + " | events | "
             try{
-
+                log.info(tag,"event: ",event)
                 //is online
                 //TODO push location
 

@@ -24,7 +24,7 @@ let GLOBAL_SESSION = "unset"
 // let spec = "http://127.0.0.1:4000/spec/swagger.json"
 let spec = "http://127.0.0.1:9001/spec/swagger.json"
 let PIONEER_WS = 'ws://127.0.0.1:9001'
-let QUERY_KEY = 'tester-driver-mobile'
+let QUERY_KEY = 'tester-driver-mobileasdas'
 // Define an async function to run the test
 const runTest = async () => {
     let tag = " | test | "
@@ -64,12 +64,23 @@ const runTest = async () => {
 
         let driver = {
             pubkey:address,
+            driverId:"driver:"+address,
             location:[ 4.5981, -74.0758 ]
         }
 
-        console.log("driver: ",driver)
-        let resultSubmit = await bankless.SubmitDriver(driver)
-        log.info(tag,"resultSubmit: ",resultSubmit)
+        //get driver
+        let driverInfo = await bankless.DriverPrivate({driverId:driver.driverId})
+        log.info(tag,"driverInfo: ",driverInfo)
+        if(driverInfo.data){
+            console.log("driver: ",driver)
+            let resultSubmit = await bankless.SubmitDriver(driver)
+            log.info(tag,"resultSubmit: ",resultSubmit)
+        }else{
+            let resultSubmit = await bankless.UpdateDriver(driver)
+            log.info(tag,"resultSubmit: ",resultSubmit)
+        }
+
+
 
         //sub ALL events
         let clientEvents = new Events.Events(config)
@@ -78,9 +89,8 @@ const runTest = async () => {
 
         //sub to events
         clientEvents.events.on('message', async (event) => {
-            let tag = TAG + " | events | "
             try{
-
+                console.log("event: ",event)
                 //is online
 
                 //if match

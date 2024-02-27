@@ -8,29 +8,38 @@
 require("dotenv").config()
 require("dotenv").config({path:'../.env'})
 const Bankless = require("@pioneer-platform/pioneer-client").default;
+
+const { randomBytes, Wallet, Mnemonic } = require('ethers');
+const ethers = require('ethers');
+
 // let signer = require("eth-token-wallet")
-let signer = require("eth_mnemonic_signer")
+// let signer = require("eth_mnemonic_signer")
 const log = require('@pioneer-platform/loggerdog')();
 let Events = require("@pioneer-platform/pioneer-events")
+
 // import { TokenWallet } from 'eth-token-wallet'
 let seed = process.env['WALLET_CUSTOMER']
 console.log("seed: ",seed)
-if(!seed) throw Error("invalid ENV:  WALLET_MARKET_MAKER required")
+if(!seed) throw Error("invalid ENV:  WALLET_CUSTOMER required")
 let GLOBAL_SESSION = "unset"
 // let spec = "http://127.0.0.1:4000/spec/swagger.json"
 let spec = "http://127.0.0.1:9001/spec/swagger.json"
 let PIONEER_WS = 'ws://127.0.0.1:9001'
-let QUERY_KEY = 'tester-driver-mobile'
+let QUERY_KEY = 'tester-customer-mobile-2-e2e'
 // Define an async function to run the test
 const runTest = async () => {
     let tag = " | test | "
     try {
 
-        let index = 1
-        let path = "m/44'/60'/"+index+"'/0/0"
-        let address = await signer.getAddress(seed,path)
-        address = address.toLowerCase()
-        console.log("address: ",address)
+        const wallet = Wallet.fromPhrase(seed);
+        console.log("Wallet address: ", wallet.address);
+        let address = wallet.address.toLowerCase()
+
+        // let index = 1
+        // let path = "m/44'/60'/"+index+"'/0/0"
+        // let address = await signer.getAddress(seed,path)
+        // address = address.toLowerCase()
+        // console.log("address: ",address)
 
         //get dollars local
         let config = {
@@ -59,7 +68,7 @@ const runTest = async () => {
         clientEvents.events.on('message', async (event) => {
             let tag = TAG + " | events | "
             try{
-
+                log.info(tag,"message: ",message)
                 //is online
 
                 //if match
@@ -80,13 +89,14 @@ const runTest = async () => {
 
         let sellOrder = {
             user:address,
+            event:"order",
             type:"sell",
             pair:"USDC_USD",
             amount:100,
             pair:"USD_USDC",
             amountOutMin:90,
         }
-        console.log("driver: ",driver)
+        console.log("sellOrder: ",sellOrder)
         let resultSubmit = await bankless.SubmitOrder(sellOrder)
         log.info(tag,"resultSubmit: ",resultSubmit)
 
