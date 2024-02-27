@@ -20,11 +20,13 @@ const MyTabs = () => {
                     } else if (route.name === 'Map') {
                         iconName = focused ? 'map' : 'map-outline';
                     }
-                    return <Ionicons name={iconName} size={size} color={color} />;
+                    return <Ionicons name={iconName} size={size} color={"white"} />;
                 },
                 tabBarActiveTintColor: 'limegreen',
                 tabBarInactiveTintColor: 'gray',
-                tabBarStyle: [{ display: 'flex' }] // Removed the null from the array
+                tabBarStyle: [{ display: 'flex', backgroundColor: 'black' }], // Added backgroundColor: 'black'
+                headerStyle: { backgroundColor: 'black' }, // Added headerStyle
+                headerTintColor: 'white', // Added headerTintColor
             })}
         >
             <Tab.Screen name="Wallet" component={WalletBalance} />
@@ -32,6 +34,7 @@ const MyTabs = () => {
         </Tab.Navigator>
     );
 };
+
 
 const AppContent = () => {
     const { isWalletConnected } = useWallet();

@@ -3,25 +3,7 @@ import { View, TouchableOpacity, Text, Alert, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import CashRequestModal from '../components/CashRequestModal';
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    map: {
-        width: '100%',
-        height: '80%',
-    },
-    pickupButton: {
-        padding: 10,
-        backgroundColor: 'blue',
-        marginTop: 10,
-    },
-    buttonText: {
-        color: 'white',
-    },
-});
+import { styles } from '../styles/styles';
 
 const billImages = {
     1: require('../../assets/cash/1USD.png'), // Make sure these paths are correct
@@ -103,7 +85,10 @@ const Map = () => {
                 ))}
             </MapView>
 
-            <TouchableOpacity style={styles.pickupButton} onPress={() => setModalVisible(true)}>
+            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+                <Text style={styles.buttonText}>Request Cash</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
                 <Text style={styles.buttonText}>Request Cash</Text>
             </TouchableOpacity>
             <CashRequestModal

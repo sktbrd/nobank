@@ -4,7 +4,7 @@ import { StyleSheet, Platform, StatusBar } from 'react-native';
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: 'black',
         justifyContent: 'center',
     },
     modalView: {
@@ -33,15 +33,18 @@ export const styles = StyleSheet.create({
     },
     suggestionButtonText: {
         fontSize: 16,
-        color: 'black',
+        color: 'white',
     },
     logo: {
         width: 100,
         height: 100,
         alignSelf: 'center',
+        borderRadius: 20,
+        marginBottom: 20,
     },
     tableContainer: {
         marginBottom: 20,
+        marginTop: 20,
     },
     tableHeader: {
         flexDirection: 'row',
@@ -53,6 +56,7 @@ export const styles = StyleSheet.create({
     headerText: {
         fontSize: 16,
         fontWeight: 'bold',
+        color: 'white',
     },
     tableRow: {
         flexDirection: 'row',
@@ -79,7 +83,7 @@ export const styles = StyleSheet.create({
     },
 
     text: {
-        color: 'black',
+        color: 'white',
         fontSize: 20,
         marginBottom: 20,
         textAlign: 'center',
@@ -125,7 +129,8 @@ export const styles = StyleSheet.create({
     },
     modalText: {
         marginBottom: 15,
-        textAlign: "center"
+        textAlign: "center",
+        fontSize: 36,
     },
     suggestionButtonsContainer: {
         flexDirection: 'row',
@@ -133,13 +138,14 @@ export const styles = StyleSheet.create({
         padding: 10,
     },
     suggestionButton: {
-        backgroundColor: 'green',
+        backgroundColor: 'lightgray',
         padding: 10,
-        borderRadius: 5,
+        borderRadius: "100%",
+        margin: 5,
     },
     suggestionButtonText: {
         fontSize: 16,
-        color: 'black',
+        color: 'white',
     },
     billsGrid: {
         flexDirection: 'row',
@@ -181,4 +187,40 @@ export const styles = StyleSheet.create({
         borderRadius: 10,
         margin: 10,
     },
+    totalAmountText: {
+        fontSize: 40,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    selectedRow: {
+        backgroundColor: 'limegreen',
+    },
+    map: {
+        width: '100%',
+        height: '80%',
+    },
+    pickupButton: {
+        padding: 10,
+        backgroundColor: 'blue',
+        marginTop: 10,
+    },
+    backgroundImage: {
+        flex: 1,
+        resizeMode: "cover",
+        justifyContent: "center"
+    },
+    textInputStyle: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginTop: 20,
+        marginBottom: 20,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+        width: '100%',
+    },
+    buttonDisabled: {
+        backgroundColor: '#ccc', // Light grey to indicate the button is disabled
+    },
+
 });

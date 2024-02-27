@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, Modal, ScrollView, Image, Alert } from 'r
 import { styles } from '../styles/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios'; // Make sure to import axios at the top of your file
+import { useUserLocation } from '../context/UserLocationContext';
+import { TextInput } from 'react-native'; // Add missing import statement
 const CashRequestModal = ({
     modalVisible,
     setModalVisible,
@@ -11,6 +13,8 @@ const CashRequestModal = ({
     const [userSelection, setUserSelection] = useState({});
     const [optimalSet, setOptimalSet] = useState({});
     const [showOptimalSet, setShowOptimalSet] = useState(false);
+    const { location } = useUserLocation();
+    const [userAddress, setUserAddress] = useState('');
 
     const dummyAvailableBillsLiquidity = {
         1: 10,
@@ -57,6 +61,7 @@ const CashRequestModal = ({
         }
     };
     QUERY_KEY = 'tester-mm-mobile2'
+
     const handleConfirm = async () => {
         try {
             console.clear();
@@ -66,37 +71,31 @@ const CashRequestModal = ({
                 setOptimalSet(optimalBillSet);
                 setShowOptimalSet(true);
                 let address = await AsyncStorage.getItem('address');
-                console.log("address: ", address);
-                console.log("totalAmount: ", totalAmount);
-                // Notice the corrected object with a single 'pair' property
                 let sellOrder = {
                     user: address,
                     event: "order",
                     type: "sell",
-                    pair: "USD_USDC", // Assuming this is the correct pair
+                    pair: "USD_USDC",
                     amount: Number(totalAmount),
                     amountOutMin: Number(totalAmount) * 0.9,
+                    address: userAddress,
+                    location: location ? `${location.latitude}, ${location.longitude}` : "Location not available",
                 };
-                console.log("sellOrder: ", sellOrder);
                 const resultSubmit = await axios.post('https://cash2btc.com/api/v1/bankless/order/submit', sellOrder, {
                     headers: {
                         Authorization: QUERY_KEY
                     }
                 });
-                console.log("resultSubmit: ", resultSubmit);
+                console.log("resultSubmit: ", JSON.stringify(resultSubmit, null, 2));
+                Alert.alert("Order Submitted", "Your order has been submitted successfully.");
             } else {
                 setShowOptimalSet(false);
             }
         } catch (error) {
             console.error("Error submitting order: ", error);
-            // Here, you can show an alert or update the UI to notify the user that the order submission failed
             Alert.alert("Order Submission Failed", "There was an error submitting your order. Please try again.");
         }
     };
-
-
-
-
 
 
     const renderBillImages = () => {
@@ -112,24 +111,18 @@ const CashRequestModal = ({
         ));
     };
 
+    // useEffect(() => {
+    //     const OnlineTerminals = async () => {
+    //         try {
+    //             const response = await fetch('https://cash2btc.com/api/v1/bankless/info');
+    //             const data = await response.json();
+    //         } catch (error) {
+    //             console.error("Error fetching server status: ", error);
+    //         }
+    //     };
 
-    // get information about market makers here : https://cash2btc.com/api/v1/online
-
-    useEffect(() => {
-        const OnlineTerminals = async () => {
-            try {
-                const response = await fetch('https://cash2btc.com/api/v1/bankless/info');
-                const data = await response.json();
-                // Do something with the data, e.g., set it to state
-            } catch (error) {
-                console.error("Error fetching server status: ", error);
-            }
-        };
-
-        OnlineTerminals();
-    }, []);
-
-
+    //     OnlineTerminals();
+    // }, []);
 
 
     return (
@@ -140,7 +133,7 @@ const CashRequestModal = ({
             onRequestClose={() => setModalVisible(!modalVisible)}
         >
             <View style={styles.modalView}>
-                <Text style={styles.totalAmountText}>Total: {calculateTotalAmount()} USD</Text>
+                <Text style={{ fontSize: 36 }}>Total: {calculateTotalAmount()} USD</Text>
                 <ScrollView contentContainerStyle={styles.billsGrid}>
                     {renderBillImages()}
                 </ScrollView>
@@ -151,9 +144,21 @@ const CashRequestModal = ({
                         </TouchableOpacity>
                     ))}
                 </View>
-                <TouchableOpacity style={styles.button} onPress={handleConfirm}>
+                <Text style={{ fontSize: 24, marginTop: 10 }}>Enter your address</Text>
+                <TextInput
+                    style={styles.textInputStyle} // Define this style in your styles.js
+                    placeholder="Enter your address"
+                    value={userAddress}
+                    onChangeText={setUserAddress} // Update the state with the user input
+                />
+                <TouchableOpacity
+                    style={[styles.button, userAddress.trim().length === 0 ? styles.buttonDisabled : {}]} // Apply disabled button style conditionally
+                    onPress={handleConfirm}
+                    disabled={userAddress.trim().length === 0} // Disable button if userAddress is empty
+                >
                     <Text style={styles.buttonText}>Confirm</Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity style={styles.button} onPress={() => { setUserSelection({}); setShowOptimalSet(false); }}>
                     <Text style={styles.buttonText}>Reset</Text>
                 </TouchableOpacity>

@@ -70,6 +70,8 @@ const WalletBalance = () => {
             console.log("tokenBalance: ", tokenBalance);
             setUsdtbalance(tokenBalance);
 
+            return usdtbalance
+
 
         } catch (e) {
             console.error(e)
@@ -78,10 +80,12 @@ const WalletBalance = () => {
 
     useEffect(() => {
         onStart()
+
         setCryptoData([
             { name: 'USDT', symbol: 'USDT', balance: usdtbalance, price: 'N/A', change: 'N/A', logo: require('../../assets/crypto/eth.png') },
         ]);
         setSelectedToken(cryptoData[0])
+
     }, []);
     const handleSelectToken = (token) => {
         setSelectedToken(token);
@@ -132,8 +136,6 @@ const WalletBalance = () => {
 
 
 
-styles.selectedRow = {
-    backgroundColor: '#d3d3d3', // Change this to your preferred color
-};
+
 
 export default WalletBalance;

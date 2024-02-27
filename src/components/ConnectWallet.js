@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { useWallet } from '../context/WalletContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from '../styles/styles';
@@ -11,7 +11,6 @@ import { ethers, Mnemonic, Wallet } from 'ethers';
 
 const ConnectWallet = () => {
     const { connectWallet } = useWallet();
-    const [modalVisible, setModalVisible] = useState(false);
     const [mnemonic, setMnemonic] = useState('');
     const [address, setAddress] = useState('');
 
@@ -44,15 +43,18 @@ const ConnectWallet = () => {
         onStart();
     }, [])
 
+    const formatWalletAddress = (address) => {
+        return `${address.substring(0, 6)}...${address.substring(address.length - 4, address.length)}`
+    }
 
     return (
         <View style={styles.container}>
 
             <View style={styles.centeredView}>
-                <Image source={require('../../assets/cashlogo.png')} style={styles.logo} />
-                <Text style={styles.text}>Welcome: {address}</Text>
+                <Image source={require('../../assets/DNA.jpg')} style={styles.logo} />
+                <Text style={styles.text}>Welcome: {formatWalletAddress(address)}</Text>
                 <TouchableOpacity style={styles.button} onPress={connectWallet}>
-                    <Text style={styles.buttonText}>Confirm Address</Text>
+                    <Text style={styles.buttonText}>Enter App</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={async () => {
                     const keys = await AsyncStorage.getItem('mnemonic');
