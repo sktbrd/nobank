@@ -3,6 +3,28 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { WalletContext } from '../context/WalletContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from '../styles/styles';
+import * as Events from "@pioneer-platform/pioneer-events";
+import axios from "axios";
+import { useEffect } from 'react';
+import { ethers } from 'ethers';
+
+import { randomBytes, Mnemonic, Wallet, JsonRpcProvider, formatUnits, Contract } from 'ethers';
+
+let QUERY_KEY = 'tester-mm-mobile2'
+
+const apiClient = axios.create({
+    baseURL: spec, // Your base URL
+    headers: {
+        'Authorization': QUERY_KEY// Replace 'YOUR_AUTH_TOKEN' with your actual token
+    }
+});
+
+// let spec = "https://cash2btc.com/spec/swagger.json"
+let spec = "https://cash2btc.com/api/v1"
+let PIONEER_WS = 'wss://cash2btc.com'
+let USDT_CONTRACT_POLYGON = "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"
+const service = "https://polygon.rpc.blxrbdn.com"
+
 
 // Dummy data for cryptocurrencies
 const cryptoData = [
@@ -18,6 +40,53 @@ const WalletBalance = () => {
     const handleSelectToken = (token) => {
         setSelectedToken(token);
     };
+
+    let onStart = async function () {
+        try {
+            let storedMnemonic = await AsyncStorage.getItem('mnemonic');
+            // The ABI for the methods we want to interact with
+            const minABI = [
+                // balanceOf
+                {
+                    "constant": true,
+                    "inputs": [{ "name": "_owner", "type": "address" }],
+                    "name": "balanceOf",
+                    "outputs": [{ "name": "balance", "type": "uint256" }],
+                    "type": "function"
+                },
+                // decimals
+                {
+                    "constant": true,
+                    "inputs": [],
+                    "name": "decimals",
+                    "outputs": [{ "name": "", "type": "uint8" }],
+                    "type": "function"
+                }
+            ];
+            // Assuming a provider is set up (e.g., ethers.getDefaultProvider or other)
+            const provider = new JsonRpcProvider(service);
+            const newContract = new ethers.Contract(USDT_CONTRACT_POLYGON, minABI, provider);
+
+            const decimals = await newContract.decimals();
+            const wallet = Wallet.fromPhrase(storedMnemonic);
+            const balanceBN = await newContract.balanceOf(wallet);
+
+            console.log("wallet: ", wallet);
+
+            const tokenBalance = formatUnits(balanceBN, decimals);
+
+            console.log("tokenBalance: ", tokenBalance);
+
+
+
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    useEffect(() => {
+        onStart()
+    }, []);
 
     return (
         <View style={styles.container}>

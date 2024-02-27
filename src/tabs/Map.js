@@ -61,11 +61,46 @@ const Map = () => {
         }));
     };
 
+    const [terminals, setTerminals] = useState([]);
+    useEffect(() => {
+        const OnlineTerminals = async () => {
+            try {
+                const response = await fetch('https://cash2btc.com/api/v1/bankless/info');
+                const data = await response.json();
+
+                // Process the response to extract and format terminal locations
+                const terminals = data.map(item => ({
+                    lat: item.location[0], // Latitude is the first element
+                    lng: item.location[1], // Longitude is the second element
+                    name: item.terminalName,
+                    address: "No address provided", // Since address isn't in the response, using a placeholder
+                }));
+                console.log("terminals: ", terminals);
+                setTerminals(terminals);
+            } catch (error) {
+                console.error("Error fetching terminals: ", error);
+            }
+        };
+
+        OnlineTerminals();
+    }, []);
+
+
+
     return (
         <View style={styles.container}>
             <MapView style={styles.map} initialRegion={location}>
                 {location && <Marker coordinate={location} title="You are here" description="Your location" />}
+                {terminals.map((terminal, index) => (
+                    <Marker
+                        key={index}
+                        coordinate={{ latitude: terminal.lat, longitude: terminal.lng }}
+                        title={terminal.name}
+                        description={terminal.address}
+                    />
+                ))}
             </MapView>
+
             <TouchableOpacity style={styles.pickupButton} onPress={() => setModalVisible(true)}>
                 <Text style={styles.buttonText}>Request Cash</Text>
             </TouchableOpacity>

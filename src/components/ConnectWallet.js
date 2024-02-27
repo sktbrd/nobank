@@ -34,6 +34,7 @@ const ConnectWallet = () => {
             console.log("Wallet address: ", wallet.address);
             console.log("Wallet private key: ", wallet.privateKey);
             setAddress(wallet.address);
+            AsyncStorage.setItem('address', wallet.address);
         } catch (e) {
             console.error("Error onStart: ", e);
         }

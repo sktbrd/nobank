@@ -31,11 +31,6 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-around',
         padding: 10,
     },
-    suggestionButton: {
-        backgroundColor: 'lightgrey',
-        padding: 10,
-        borderRadius: 5,
-    },
     suggestionButtonText: {
         fontSize: 16,
         color: 'black',
@@ -138,7 +133,7 @@ export const styles = StyleSheet.create({
         padding: 10,
     },
     suggestionButton: {
-        backgroundColor: 'lightgrey',
+        backgroundColor: 'green',
         padding: 10,
         borderRadius: 5,
     },
@@ -179,5 +174,11 @@ export const styles = StyleSheet.create({
     sidebyside: {
         flexDirection: 'row',
         justifyContent: 'space-around',
+    },
+    closeButtonText: {
+        color: 'tomato',
+        padding: 10,
+        borderRadius: 10,
+        margin: 10,
     },
 });
