@@ -21,10 +21,10 @@ let seed = process.env['WALLET_MARKET_MAKER']
 console.log("seed: ",seed)
 if(!seed) throw Error("invalid ENV:  WALLET_MARKET_MAKER required")
 let GLOBAL_SESSION = "unset"
-// let spec = "https://cash2btc.com/spec/swagger.json"
-let spec = "http://127.0.0.1:9001/spec/swagger.json"
-// let PIONEER_WS = 'wss://cash2btc.com'
-let PIONEER_WS = 'ws://127.0.0.1:9001'
+let spec = "https://cash2btc.com/spec/swagger.json"
+// let spec = "http://127.0.0.1:9001/spec/swagger.json"
+let PIONEER_WS = 'wss://cash2btc.com'
+// let PIONEER_WS = 'ws://127.0.0.1:9001'
 let QUERY_KEY = 'tester-mm-mobile-31212'
 // Define an async function to run the test
 const runTest = async () => {
@@ -91,6 +91,14 @@ const runTest = async () => {
                 TOTAL_CASH:TOTAL_CASH.toString(),
                 TOTAL_DAI:TOTAL_DAI.toString(),
                 pubkey:address,
+                inventory:{
+                    100:1,
+                    50:1,
+                    20:1,
+                    10:1,
+                    5:1,
+                    1:1,
+                },
                 address:{
                     street: "Calle 1",
                     city: "Bogota",
@@ -113,6 +121,14 @@ const runTest = async () => {
                 TOTAL_CASH:TOTAL_CASH.toString(),
                 TOTAL_DAI:TOTAL_DAI.toString(),
                 captable:[],
+                inventory:{
+                    100:1,
+                    50:1,
+                    20:1,
+                    10:1,
+                    5:1,
+                    1:1,
+                },
                 address:{
                     street: "Calle 1",
                     city: "Bogota",
