@@ -4,11 +4,7 @@ import { useWallet } from '../context/WalletContext'; // Correctly import useWal
 import { styles } from '../styles/styles';
 
 const WalletBalance = () => {
-    const { balance, disconnectWallet, fetchAndSetBalance } = useWallet(); // Destructure the needed values from the context
-
-    useEffect(() => {
-        fetchAndSetBalance(); // Call this to ensure the balance is fetched/updated when the component mounts
-    }, [fetchAndSetBalance]); // Correct dependency array
+    const { balance, disconnectWallet, fetchAndSetBalanceAsync } = useWallet(); // Destructure the needed values from the context
 
     // Assuming cryptoData will be populated or fetched from somewhere
     const cryptoData = [

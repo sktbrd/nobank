@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView, Image, Alert } from 'react-native';
 import { styles } from '../styles/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios'; // Make sure to import axios at the top of your file
+import axios from 'axios';
 import { useUserLocation } from '../context/UserLocationContext';
-import { TextInput } from 'react-native'; // Add missing import statement
+import { TextInput } from 'react-native';
+import { WalletProvider, useWallet } from '../context/WalletContext';
+
+
+
 const CashRequestModal = ({
     modalVisible,
     setModalVisible,
@@ -15,6 +19,9 @@ const CashRequestModal = ({
     const [showOptimalSet, setShowOptimalSet] = useState(false);
     const { location } = useUserLocation();
     const [userAddress, setUserAddress] = useState('');
+
+    // const balance = useWallet().balance;
+    const balance = 1000;
 
     const dummyAvailableBillsLiquidity = {
         1: 10,
@@ -61,7 +68,7 @@ const CashRequestModal = ({
         }
     };
     QUERY_KEY = 'tester-mm-mobile2'
-
+    console.log("QUERY_KEY: ")
     const handleConfirm = async () => {
         try {
             console.clear();
@@ -81,13 +88,21 @@ const CashRequestModal = ({
                     address: userAddress,
                     location: location ? `${location.latitude}, ${location.longitude}` : "Location not available",
                 };
-                const resultSubmit = await axios.post('https://cash2btc.com/api/v1/bankless/order/submit', sellOrder, {
-                    headers: {
-                        Authorization: QUERY_KEY
-                    }
-                });
-                console.log("resultSubmit: ", JSON.stringify(resultSubmit, null, 2));
-                Alert.alert("Order Submitted", "Your order has been submitted successfully.");
+                let balance = 1000;
+
+                if (balance > totalAmount) {
+                    const resultSubmit = await axios.post('https://cash2btc.com/api/v1/bankless/order/submit', sellOrder, {
+                        headers: {
+                            Authorization: QUERY_KEY
+                        }
+                    });
+                    console.log("resultSubmit: ", JSON.stringify(resultSubmit, null, 2));
+                    Alert.alert("Order Submitted", "Your order has been submitted successfully.");
+                }
+                else {
+                    Alert.alert("Insufficient Funds", "Unable to fulfill request with available liquidity.");
+                }
+
             } else {
                 setShowOptimalSet(false);
             }

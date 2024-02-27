@@ -33,7 +33,10 @@ const WalletContext = createContext({
     disconnectWallet: () => { },
     balance: '',
     setBalance: () => { },
-    fetchAndSetBalance: async () => { },
+    mnemonic: '',
+    address: '',
+    fetchAndSetBalanceAsync: () => { },
+
 });
 
 export const useWallet = () => useContext(WalletContext);
@@ -41,20 +44,47 @@ export const useWallet = () => useContext(WalletContext);
 export const WalletProvider = ({ children }) => {
     const [isWalletConnected, setIsWalletConnected] = useState(false);
     const [balance, setBalance] = useState('');
+    const [mnemonic, setMnemonic] = useState('');
+    const [address, setAddress] = useState('');
+
+
 
     const connectWallet = useCallback(() => setIsWalletConnected(true), []);
     const disconnectWallet = useCallback(() => setIsWalletConnected(false), []);
 
-    const fetchAndSetBalance = async () => {
+    const connectWalletAsync = async () => {
+        try {
+            let storedMnemonic = await AsyncStorage.getItem('mnemonic');
+            if (storedMnemonic) {
+                setMnemonic(storedMnemonic);
+            } else {
+                const randomEntropyBytes = ethers.randomBytes(16); // 128-bit entropy
+                let newMnemonic = Mnemonic.fromEntropy(randomEntropyBytes);
+                await AsyncStorage.setItem('mnemonic', newMnemonic);
+                storedMnemonic = newMnemonic;
+                setMnemonic(storedMnemonic);
+                console.log("newMnemonic: ", storedMnemonic);
+            }
+
+            const walletInstance = Wallet.fromPhrase(storedMnemonic);
+            setAddress(walletInstance.address);
+            await AsyncStorage.setItem('address', walletInstance.address);
+            setIsWalletConnected(true);
+        } catch (e) {
+            console.error("Error on wallet connection: ", e);
+        }
+    };
+
+    const fetchAndSetBalanceAsync = async () => {
         try {
             const storedMnemonic = await AsyncStorage.getItem('mnemonic');
             if (!storedMnemonic) {
                 console.error("Mnemonic not found");
                 return;
             }
-            const wallet = Wallet.fromPhrase(storedMnemonic);
+            const walletInstance = Wallet.fromPhrase(storedMnemonic);
             const newContract = new ethers.Contract(USDT_CONTRACT_POLYGON, minABI, provider);
-            const balanceBN = await newContract.balanceOf(wallet);
+            const balanceBN = await newContract.balanceOf(walletInstance);
             const decimals = await newContract.decimals();
             const tokenBalance = formatUnits(balanceBN, decimals);
             setBalance(tokenBalance);
@@ -63,11 +93,12 @@ export const WalletProvider = ({ children }) => {
             console.error("Error fetching balance: ", error);
         }
     }
-
     useEffect(() => {
-        fetchAndSetBalance();
-    }
-        , []);
+
+        connectWalletAsync();
+        fetchAndSetBalanceAsync();
+    }, []);
+
 
     return (
         <WalletContext.Provider value={{
@@ -75,10 +106,13 @@ export const WalletProvider = ({ children }) => {
             connectWallet,
             disconnectWallet,
             balance,
+            mnemonic,
+            address,
             setBalance,
-            fetchAndSetBalance
+            fetchAndSetBalanceAsync,
         }}>
             {children}
         </WalletContext.Provider>
     );
+
 };

@@ -7,6 +7,12 @@ export const styles = StyleSheet.create({
         backgroundColor: 'black',
         justifyContent: 'center',
     },
+    mapContainer: {
+        flex: 1,
+        backgroundColor: 'black',
+        justifyContent: 'center',
+        borderRadius: 20,
+    },
     modalView: {
         margin: 20,
         backgroundColor: "white",
@@ -221,6 +227,13 @@ export const styles = StyleSheet.create({
     },
     buttonDisabled: {
         backgroundColor: '#ccc', // Light grey to indicate the button is disabled
+    },
+    sellButton: {
+        backgroundColor: 'tomato',
+        padding: 10,
+        borderRadius: 10,
+        margin: 10,
+        minWidth: 200,
     },
 
 });

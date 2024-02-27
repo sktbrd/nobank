@@ -10,41 +10,10 @@ import { ethers, Mnemonic, Wallet } from 'ethers';
 
 
 const ConnectWallet = () => {
-    const { connectWallet } = useWallet();
-    const [mnemonic, setMnemonic] = useState('');
-    const [address, setAddress] = useState('');
-
-    const onStart = async function () {
-        try {
-            let storedMnemonic = await AsyncStorage.getItem('mnemonic');
-            if (storedMnemonic) {
-                setMnemonic(storedMnemonic);
-            } else {
-                const randomEntropyBytes = ethers.randomBytes(16); // 128-bit entropy
-                console.log("randomEntropyBytes: ", randomEntropyBytes);
-                // console.log("newMnemonic: ", Mnemonic.fromEntropy(randomEntropyBytes))
-                let newMnemonic = Mnemonic.fromEntropy(randomEntropyBytes);
-                AsyncStorage.setItem('mnemonic', newMnemonic.phrase);
-                storedMnemonic = newMnemonic.phrase
-                setMnemonic(storedMnemonic)
-            }
-            // Create wallet from the mnexmonic
-            const wallet = Wallet.fromPhrase(storedMnemonic);
-            console.log("Wallet address: ", wallet.address);
-            console.log("Wallet private key: ", wallet.privateKey);
-            setAddress(wallet.address);
-            AsyncStorage.setItem('address', wallet.address);
-        } catch (e) {
-            console.error("Error onStart: ", e);
-        }
-    }
-
-    useEffect(() => {
-        onStart();
-    }, [])
+    const { connectWallet, isWalletConnected, address } = useWallet();
 
     const formatWalletAddress = (address) => {
-        return `${address.substring(0, 6)}...${address.substring(address.length - 4, address.length)}`
+        return `${address.substring(0, 6)}...${address.substring(address.length - 4, address.length)}`;
     }
 
     return (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Text, Alert, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, Alert, StyleSheet, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import CashRequestModal from '../components/CashRequestModal';
@@ -72,24 +72,29 @@ const Map = () => {
 
     return (
         <View style={styles.container}>
-            <MapView style={styles.map} initialRegion={location}>
+            <MapView style={styles.mapContainer} initialRegion={location}>
                 {location && <Marker coordinate={location} title="You are here" description="Your location" />}
                 {terminals.map((terminal, index) => (
                     <Marker
                         key={index}
                         coordinate={{ latitude: terminal.lat, longitude: terminal.lng }}
                         title={terminal.name}
-                        description={terminal.TOTAL_CASH}
-                        icon={require('../../assets/cashlogo.png')}
-                    />
+                        description={terminal.TOTAL_CASH}>
+                        <View>
+                            <Image
+                                source={require('../../assets/cashlogo.png')}
+                                style={{ width: 60, height: 60, borderRadius: 50 }} // Adjust the width and height as needed
+                            />
+                        </View>
+                    </Marker>
                 ))}
             </MapView>
 
             <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-                <Text style={styles.buttonText}>Request Cash</Text>
+                <Text style={styles.buttonText}>Buy Cash</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-                <Text style={styles.buttonText}>Request Cash</Text>
+            <TouchableOpacity style={styles.sellButton} onPress={() => setModalVisible(true)}>
+                <Text style={styles.buttonText}>Sell Cash</Text>
             </TouchableOpacity>
             <CashRequestModal
                 modalVisible={modalVisible}
