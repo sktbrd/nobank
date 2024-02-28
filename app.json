@@ -22,10 +22,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/cashlogo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.bithighlander.supercash"
     },
     "web": {
       "favicon": "./assets/crypto/eth.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e6275e3b-b6ff-43c7-8766-ad4b9e1ba353"
+      }
     }
   }
 }
