@@ -68,10 +68,8 @@ const CashRequestModal = ({
         }
     };
     QUERY_KEY = 'tester-mm-mobile2'
-    console.log("QUERY_KEY: ")
     const handleConfirm = async () => {
         try {
-            console.clear();
             const totalAmount = calculateTotalAmount();
             const optimalBillSet = calculateOptimalBillSet(totalAmount);
             if (optimalBillSet) {
@@ -88,6 +86,7 @@ const CashRequestModal = ({
                     address: userAddress,
                     location: location ? `${location.latitude}, ${location.longitude}` : "Location not available",
                 };
+                // fake balance but, right balance ready to use
                 let balance = 1000;
 
                 if (balance > totalAmount) {
@@ -96,7 +95,7 @@ const CashRequestModal = ({
                             Authorization: QUERY_KEY
                         }
                     });
-                    console.log("resultSubmit: ", JSON.stringify(resultSubmit, null, 2));
+                    // console.log("resultSubmit: ", JSON.stringify(resultSubmit, null, 2));
                     Alert.alert("Order Submitted", "Your order has been submitted successfully.");
                 }
                 else {
