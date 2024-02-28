@@ -91,10 +91,10 @@ const Map = () => {
             </MapView>
 
             <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-                <Text style={styles.buttonText}>Buy Cash</Text>
+                <Text style={styles.buttonText}>Buy Crypto</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.sellButton} onPress={() => setModalVisible(true)}>
-                <Text style={styles.buttonText}>Sell Cash</Text>
+                <Text style={styles.buttonText}>Sell Crypto</Text>
             </TouchableOpacity>
             <CashRequestModal
                 modalVisible={modalVisible}

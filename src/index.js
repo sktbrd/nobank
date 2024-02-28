@@ -29,8 +29,8 @@ const MyTabs = () => {
                 headerTintColor: 'white', // Added headerTintColor
             })}
         >
-            <Tab.Screen name="Wallet" component={WalletBalance} />
             <Tab.Screen name="Map" component={Map} />
+            <Tab.Screen name="Wallet" component={WalletBalance} />
         </Tab.Navigator>
     );
 };

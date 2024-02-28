@@ -44,21 +44,6 @@ const WalletBalance = () => {
                     </TouchableOpacity>
                 ))}
             </ScrollView>
-            {selectedToken && (
-                <View style={styles.centeredView}>
-                    <TouchableOpacity style={[styles.button, styles.actionButton]} onPress={() => { /* Implement Buy Logic */ }}>
-                        <Text style={styles.buttonText}>Buy {selectedToken.symbol}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.button, styles.actionButton]} onPress={() => { /* Implement Sell Logic */ }}>
-                        <Text style={styles.buttonText}>Sell {selectedToken.symbol}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.disconnectButton}
-                        onPress={disconnectWallet}>
-                        <Text style={styles.buttonText}>Disconnect Wallet</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
         </View>
     );
 };
