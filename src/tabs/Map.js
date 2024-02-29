@@ -17,6 +17,7 @@ const billImages = {
 const Map = () => {
     const [location, setLocation] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [terminal, setTerminalSelected] = useState(null);
     const [cashCounts, setCashCounts] = useState({});
 
     useEffect(() => {
@@ -52,11 +53,11 @@ const Map = () => {
                 console.log("data: ", data);
                 // Process the response to extract and format terminal locations
                 const terminals = data.map(item => ({
+                    ...item,
                     lat: item.location[0], // Latitude is the first element
                     lng: item.location[1], // Longitude is the second element
                     name: item.terminalName,
-                    totalCash: item.TOTAL_CASH,
-                    address: "No address provided", // Since address isn't in the response, using a placeholder
+                    totalCash: item.TOTAL_CASH
                 }));
                 console.log("terminals: ", terminals);
                 setTerminals(terminals);
@@ -68,10 +69,15 @@ const Map = () => {
         OnlineTerminals();
     }, []);
 
-
+    // Make sure this function is correctly handling terminal selection
+    const onTerminalPress = (terminal) => {
+        setTerminalSelected(terminal); // This should allow you to select a terminal
+        setModalVisible(true)
+    };
 
     return (
         <View style={styles.container}>
+            <Text>terminal: {JSON.stringify(terminal)}</Text>
             <MapView style={styles.mapContainer} initialRegion={location}>
                 {location && <Marker coordinate={location} title="You are here" description="Your location" />}
                 {terminals.map((terminal, index) => (
@@ -79,7 +85,9 @@ const Map = () => {
                         key={index}
                         coordinate={{ latitude: terminal.lat, longitude: terminal.lng }}
                         title={terminal.name}
-                        description={terminal.TOTAL_CASH}>
+                        description={terminal.TOTAL_CASH}
+                        onPress={() => onTerminalPress(terminal)}
+                    >
                         <View>
                             <Image
                                 source={require('../../assets/cashlogo.png')}
@@ -90,12 +98,41 @@ const Map = () => {
                 ))}
             </MapView>
 
-            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-                <Text style={styles.buttonText}>Buy Crypto</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sellButton} onPress={() => setModalVisible(true)}>
-                <Text style={styles.buttonText}>Sell Crypto</Text>
-            </TouchableOpacity>
+            {/*{terminal ? (*/}
+            {/*    <View>*/}
+            {/*        <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>*/}
+            {/*            <Text style={styles.buttonText}>Buy Crypto</Text>*/}
+            {/*        </TouchableOpacity>*/}
+            {/*        <TouchableOpacity style={styles.sellButton} onPress={() => setModalVisible(true)}>*/}
+            {/*            <Text style={styles.buttonText}>Sell Crypto</Text>*/}
+            {/*        </TouchableOpacity>*/}
+            {/*    </View>*/}
+            {/*) : (*/}
+            {/*    <View>*/}
+            {/*        <MapView style={styles.mapContainer} initialRegion={location}>*/}
+            {/*            {location && <Marker coordinate={location} title="You are here" description="Your location" />}*/}
+            {/*            {terminals.map((terminal, index) => (*/}
+            {/*                <Marker*/}
+            {/*                    key={index}*/}
+            {/*                    coordinate={{ latitude: terminal.lat, longitude: terminal.lng }}*/}
+            {/*                    title={terminal.name}*/}
+            {/*                    description={terminal.TOTAL_CASH}*/}
+            {/*                    onPress={() => onTerminalPress(terminal)}*/}
+            {/*                >*/}
+            {/*                    <View>*/}
+            {/*                        <Image*/}
+            {/*                            source={require('../../assets/cashlogo.png')}*/}
+            {/*                            style={{ width: 60, height: 60, borderRadius: 50 }} // Adjust the width and height as needed*/}
+            {/*                        />*/}
+            {/*                    </View>*/}
+            {/*                </Marker>*/}
+            {/*            ))}*/}
+            {/*        </MapView>*/}
+            {/*    </View>*/}
+            {/*)}*/}
+
+
+
             <CashRequestModal
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
@@ -103,6 +140,7 @@ const Map = () => {
                 addCashAmount={addCashAmount}
                 setCashCounts={setCashCounts}
                 billImages={billImages}
+                terminal={terminal}
             />
         </View>
     );

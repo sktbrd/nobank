@@ -13,6 +13,7 @@ const CashRequestModal = ({
     modalVisible,
     setModalVisible,
     billImages,
+    terminal
 }) => {
     const [userSelection, setUserSelection] = useState({});
     const [optimalSet, setOptimalSet] = useState({});
@@ -22,15 +23,6 @@ const CashRequestModal = ({
 
     // const balance = useWallet().balance;
     const balance = 1000;
-
-    const dummyAvailableBillsLiquidity = {
-        1: 10,
-        5: 10,
-        10: 10,
-        20: 10,
-        50: 10,
-        100: 10,
-    };
 
     const addCashAmount = (amount) => {
         setUserSelection((prevSelection) => ({
@@ -48,10 +40,11 @@ const CashRequestModal = ({
     const calculateOptimalBillSet = (requestedAmount) => {
         let remainingAmount = requestedAmount;
         const billSet = {};
-        const billValues = Object.keys(dummyAvailableBillsLiquidity).map(Number).sort((a, b) => b - a);
+        console.log("inventory: ",terminal.inventory)
+        const billValues = Object.keys(terminal.inventory).map(Number).sort((a, b) => b - a);
 
         for (let bill of billValues) {
-            const availableBills = dummyAvailableBillsLiquidity[bill];
+            const availableBills = terminal.inventory[bill];
             const neededBills = Math.floor(remainingAmount / bill);
             if (neededBills > 0) {
                 const billsToUse = Math.min(neededBills, availableBills);
@@ -67,9 +60,9 @@ const CashRequestModal = ({
             return billSet;
         }
     };
-    QUERY_KEY = 'tester-mm-mobile2'
     const handleConfirm = async () => {
         try {
+            let QUERY_KEY = await AsyncStorage.getItem('QUERY_KEY');
             const totalAmount = calculateTotalAmount();
             const optimalBillSet = calculateOptimalBillSet(totalAmount);
             if (optimalBillSet) {
@@ -125,6 +118,23 @@ const CashRequestModal = ({
         ));
     };
 
+    useEffect(() => {
+        console.log("terminal: ",terminal)
+    }, [terminal]);
+
+    // const OnlineTerminals = async () => {
+    //     try {
+    //         const response = await fetch('https://cash2btc.com/api/v1/bankless/info');
+    //         const data = await response.json();
+    //     } catch (error) {
+    //         console.error("Error fetching server status: ", error);
+    //     }
+    // };
+    //
+    // useEffect(() => {
+    //     OnlineTerminals();
+    // }, []);
+
     // useEffect(() => {
     //     const OnlineTerminals = async () => {
     //         try {
@@ -165,6 +175,7 @@ const CashRequestModal = ({
                     value={userAddress}
                     onChangeText={setUserAddress} // Update the state with the user input
                 />
+                <Text>terminal {terminal?.name}</Text>
                 <TouchableOpacity
                     style={[styles.button, userAddress.trim().length === 0 ? styles.buttonDisabled : {}]} // Apply disabled button style conditionally
                     onPress={handleConfirm}

@@ -103,7 +103,7 @@ const ConnectWallet = () => {
             let QUERY_KEY = await AsyncStorage.getItem('QUERY_KEY');
             if(!QUERY_KEY){
                 QUERY_KEY = uuidv4()
-                AsyncStorage.setItem('QUERY_KEY');
+                AsyncStorage.setItem('QUERY_KEY', QUERY_KEY);
             }
             let PIONEER_WS = 'wss://cash2btc.com'
             let address = await AsyncStorage.getItem('address');
